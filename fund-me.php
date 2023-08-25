@@ -16,7 +16,9 @@
 
 define( 'FUND_ME_PLUGIN_HEADER', 'Funding URI' );
 
-include_once 'vendor/autoload.php';
+if ( is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
+    require __DIR__ . '/vendor/autoload.php';
+}
 
 add_action( 'admin_init', 'fundme_admin_init' );
 function fundme_admin_init() {

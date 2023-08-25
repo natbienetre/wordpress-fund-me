@@ -1,5 +1,6 @@
 {
     "name": "natbienetre/fund-me",
+    "type": "wordpress-plugin",
     "description": "WordPress plugin to get donation",
     "require-dev": {
         "yoast/phpunit-polyfills": "^2",
@@ -41,5 +42,12 @@
             "phpunit"
         ]
     },
-    "require": {}
+    "require": {
+        "composer/installers": "^2.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
 }
