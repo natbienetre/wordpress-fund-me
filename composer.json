@@ -3,8 +3,8 @@
     "type": "wordpress-plugin",
     "description": "WordPress plugin to get donation",
     "require-dev": {
-        "yoast/phpunit-polyfills": "^2",
-        "phpunit/phpunit": "^9",
+        "yoast/phpunit-polyfills": "^4",
+        "phpunit/phpunit": "^12",
         "wp-cli/wp-cli-bundle": "*"
     },
     "license": "MPL-2.0",
