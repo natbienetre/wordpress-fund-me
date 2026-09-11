@@ -20,10 +20,18 @@ of logic in `fund-me.php`) to cover completely in a single change.
   - `fundme_extra_funding_uri` registers `Funding URI` as a recognized extra header exactly
     once, for both plugin and theme header lists.
 - No changes to `fund-me.php` itself, `composer.json` scripts, or CI workflow configuration.
-  The existing `ci-test` script and its scaffolded `phpunit.xml.dist` already discover any
-  `tests/test-*.php` file automatically (`<directory prefix="test-" suffix=".php">./tests/</directory>`,
-  with `tests/test-sample.php` explicitly excluded), so committing new test files is enough to
-  wire them into CI.
+- Adds a project-owned `phpunit.xml` (PHPUnit prefers this over the regenerated
+  `phpunit.xml.dist` when both exist), pointing directly at `tests/TestFundMe.php`. Discovered
+  while implementing: PHPUnit 12's test loader can never discover any file matching wp-cli's
+  mandated `test-*.php` naming convention (the hyphen makes the class-name match structurally
+  impossible), so the originally-planned "just add `tests/test-*.php`, it's auto-discovered"
+  approach doesn't work as-is. See design.md for detail.
+- Adds two minimal fixture themes under `tests/data/themes/` used to test
+  `fundme_themes_action_links` against real `WP_Theme` instances (discovered while
+  implementing: `WP_Theme` is `final` in current WordPress core and can't be mocked).
+- Depends on PR #7 (`revert-phpunit-major`): WordPress core's test suite is incompatible with
+  PHPUnit 10+ (Trac #62004), discovered while implementing this change, and reverted
+  separately.
 - No coverage-percentage measurement or reporting is added (no Xdebug/PCOV wiring in
   `test.yml`) — this change is about adding real assertions, not measuring their coverage.
 
@@ -39,8 +47,9 @@ plugin does)
 
 ## Impact
 
-- Affected code: none (test-only change).
-- Affected files: new files under `tests/` (e.g. `tests/test-fund-me.php`); no changes to
-  `fund-me.php`, `composer.json`, or `.github/workflows/`.
+- Affected code: none (test-only change to `fund-me.php`).
+- Affected files: `tests/TestFundMe.php`, `tests/data/themes/**/style.css` (fixtures), and a new
+  `phpunit.xml`; no changes to `fund-me.php`, `composer.json` scripts, or `.github/workflows/`
+  in *this* PR (the PHPUnit major-version revert it depends on is PR #7).
 - Affected systems: `composer run-script ci-test` will now run real assertions instead of only
   the placeholder sample test; the "JUnit Test Report" CI check becomes meaningful.
