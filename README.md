@@ -14,9 +14,14 @@ box. Fund Me:
 1. Registers `Funding URI` as a recognized extra header for both plugins and themes (via the
    `extra_plugin_headers` and `extra_theme_headers` filters), so WordPress parses it out of the
    plugin/theme file header block instead of ignoring it.
-2. Adds a **[❤️ Show support](https://github.com/sponsors/holyhope)** action link — next to *Deactivate* on the Plugins screen, or next
-   to *Customize* on the Themes screen — for any plugin or theme that declares a non-empty
-   `Funding URI`, linking to that URL in a new tab.
+2. Adds a **[❤️ Show support](https://github.com/sponsors/holyhope)** action link for any plugin or theme that declares a
+   non-empty `Funding URI`, linking to that URL in a new tab:
+   - for plugins, next to *Deactivate* on the Plugins screen (single-site and Multisite network
+     admin);
+   - for themes, only on the Multisite network-admin Themes list and the legacy "browse
+     available themes" table — **not** on the standard single-site *Appearance → Themes*
+     screen, which builds its own action links in PHP and never fires the `theme_action_links`
+     filter this plugin hooks into.
 
 If a plugin or theme has no `Funding URI`, nothing changes for it.
 
