@@ -33,6 +33,23 @@ class TestFundMe extends WP_UnitTestCase {
 	}
 
 	/**
+	 * fundme_extra_funding_uri() is actually wired to the extra_plugin_headers and
+	 * extra_theme_headers filters, not just callable directly. Runs the filters
+	 * themselves rather than calling the function, so a removed/misattached
+	 * add_filter() call in fund-me.php would fail this test.
+	 */
+	public function test_extra_funding_uri_is_registered_on_both_header_filters() {
+		$this->assertContains(
+			FUND_ME_PLUGIN_HEADER,
+			apply_filters( 'extra_plugin_headers', array() )
+		);
+		$this->assertContains(
+			FUND_ME_PLUGIN_HEADER,
+			apply_filters( 'extra_theme_headers', array() )
+		);
+	}
+
+	/**
 	 * fundme_plugins_action_links() appends a support link when Funding URI is present.
 	 */
 	public function test_plugins_action_links_appends_link_when_funding_uri_present() {
@@ -106,10 +123,16 @@ class TestFundMe extends WP_UnitTestCase {
 	 * fundme_action_link() builds the expected anchor markup.
 	 */
 	public function test_action_link_markup() {
-		$link = fundme_action_link( 'https://example.com/sponsor' );
+		// Deliberately contains a double quote and an ampersand: an unescaped URL
+		// here would break out of the href attribute, so this proves esc_attr()
+		// is actually applied rather than passing merely because the fixture URL
+		// happened to need no escaping.
+		$url  = 'https://example.com/sponsor?ref="fund-me"&utm_source=plugin';
+		$link = fundme_action_link( $url );
 
 		$this->assertStringContainsString( 'target="_blank"', $link );
-		$this->assertStringContainsString( 'href="' . esc_attr( 'https://example.com/sponsor' ) . '"', $link );
+		$this->assertStringContainsString( 'href="' . esc_attr( $url ) . '"', $link );
+		$this->assertStringNotContainsString( 'href="' . $url . '"', $link );
 		$this->assertStringContainsString( 'Show support', $link );
 	}
 
