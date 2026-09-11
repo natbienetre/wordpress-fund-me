@@ -29,7 +29,7 @@
         "ci-test": [
             "wp scaffold plugin-tests fund-me --dir=$(pwd) --force",
             "./bin/install-wp-tests.sh wordpress root root localhost latest true",
-            "phpunit --no-interaction --log-junit junit-result.xml"
+            "phpunit --log-junit junit-result.xml"
         ],
         "build": [
             "composer install --dev --prefer-dist --no-interaction --no-progress --no-suggest",
