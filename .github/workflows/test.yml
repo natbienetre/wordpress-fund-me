@@ -24,15 +24,6 @@ jobs:
         sudo /etc/init.d/mysql start
         mysql -e 'CREATE DATABASE IF NOT EXISTS wordpress;' -uroot -proot
     
-    - name: Setup WP-CLI
-      uses: godaddy-wordpress/setup-wp-cli@1
-    
-    - name: Install WordPress
-      run: |-
-        wp core download --path=wordpress --force --quiet
-        wp config create --path=wordpress --dbname=wordpress --dbuser=root --dbpass=root
-        wp core install --path=./wordpress --url=localhost --title=WordPress --admin_user=admin --admin_password=password --admin_email=wordpress@github.fund-me.com
-
     - uses: actions/checkout@v7
       with:
         path: wordpress/wp-content/plugins/fund-me
@@ -53,6 +44,12 @@ jobs:
     - name: Install dependencies
       working-directory: ./wordpress/wp-content/plugins/fund-me
       run: composer install --prefer-dist --no-progress
+
+    - name: Install WordPress
+      run: |-
+        ./wordpress/wp-content/plugins/fund-me/vendor/bin/wp core download --path=wordpress --force --quiet
+        ./wordpress/wp-content/plugins/fund-me/vendor/bin/wp config create --path=wordpress --dbname=wordpress --dbuser=root --dbpass=root
+        ./wordpress/wp-content/plugins/fund-me/vendor/bin/wp core install --path=./wordpress --url=localhost --title=WordPress --admin_user=admin --admin_password=password --admin_email=wordpress@github.fund-me.com
 
     - name: Run test suite
       working-directory: ./wordpress/wp-content/plugins/fund-me
