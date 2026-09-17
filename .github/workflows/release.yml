@@ -32,14 +32,12 @@ jobs:
         echo FUNDME_VERSION="$(composer run-script version)" >> "$GITHUB_OUTPUT"
         git log $(git describe --tags --abbrev=0)..HEAD --oneline > changes.txt
 
-    - uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
-      with:
-        artifactContentType: "application/zip"
-        artifactErrorsFailBuild: true
-        artifacts: "fund-me.zip"
-        bodyFile: changes.txt
-        draft: true
-        omitDraftDuringUpdate: true
-        removeArtifacts: true
-        tag: "v${{ steps.version.outputs.FUNDME_VERSION }}"
-        updateOnlyUnreleased: true
+    - name: Create draft release
+      env:
+        GH_TOKEN: ${{ github.token }}
+        RELEASE_TAG: "v${{ steps.version.outputs.FUNDME_VERSION }}"
+      run: |-
+        gh release create "$RELEASE_TAG" fund-me.zip \
+          --draft \
+          --notes-file changes.txt \
+          --title "$RELEASE_TAG"
