@@ -32,7 +32,7 @@ jobs:
         echo FUNDME_VERSION="$(composer run-script version)" >> "$GITHUB_OUTPUT"
         git log $(git describe --tags --abbrev=0)..HEAD --oneline > changes.txt
 
-    - uses: ncipollo/release-action@v1
+    - uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
       with:
         artifactContentType: "application/zip"
         artifactErrorsFailBuild: true
